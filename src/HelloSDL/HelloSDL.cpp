@@ -8,8 +8,8 @@
 
 #define ASSERT(cnd, msg) if (cnd) throw std::exception(&(msg)[0]);
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 1200
+#define SCREEN_HEIGHT 720
 
 void Init(SDL_Window* &window, SDL_Renderer* &renderer) {
 	ASSERT(SDL_Init(SDL_INIT_VIDEO) < 0, "SDL could not initialize!");
