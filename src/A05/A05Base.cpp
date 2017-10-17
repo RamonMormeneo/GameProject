@@ -42,7 +42,7 @@ int main(int, char*[]) {
 	if (tmpSurf == nullptr)throw "No es pot inicialitzar SDL_ttf font";
 	SDL_Texture *textTexture{ SDL_CreateTextureFromSurface(renderer,tmpSurf) };
 	SDL_Rect textRect{ 100,50,tmpSurf->w,tmpSurf->h };
-	SDL_FreeSurface(tmpSurf);cf
+	SDL_FreeSurface(tmpSurf);
 	TTF_CloseFont(font);
 	// --- AUDIO ---
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
