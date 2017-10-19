@@ -5,6 +5,8 @@
 //Game general information
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
+#define FPS 60
+
 
 int main(int, char*[]) {
 
@@ -31,10 +33,22 @@ int main(int, char*[]) {
 	if (bgTexture == nullptr) throw " No s'han pogut carregar les textures";
 	SDL_Rect bgRect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 		// --- Animated Sprite ---
+	/*
 	SDL_Texture *playerTexture{ IMG_LoadTexture (renderer,"../../res/img/kintoun.png") };
 	if (playerTexture == nullptr) throw " No s'han pogut crear les textures";
 	SDL_Rect playerRect{ 0, 0, 350, 189 };
-	SDL_Rect playerTarget{ 0, 0, 100, 100 };
+	SDL_Rect playerTarget{ 0, 0, 100, 100 };*/
+	SDL_Texture *playerTexture(IMG_LoadTexture(renderer, "../../res/img/sp01.png"));
+	SDL_Rect playerRect, playerPosition;
+	int textWidth, textHeight, frameWidth, frameHeight;
+	SDL_QueryTexture(playerTexture, NULL, NULL, &textWidth, &textHeight);
+	frameWidth = textWidth / 6;
+	frameHeight = textHeight / 1;
+	playerPosition.x = playerPosition.y = 0;
+	playerRect.x = playerRect.y = 0;
+	playerPosition.h = playerRect.h = frameHeight;
+	playerPosition.w = playerRect.w = frameWidth;
+	int frameTime = 0;
 	// --- TEXT ---
 	TTF_Font *font{ TTF_OpenFont("../../res/ttf/saiyan.ttf",80) };
 	if(font==nullptr)throw "No es pot inicialitzar SDL_ttf font";
@@ -54,30 +68,40 @@ int main(int, char*[]) {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
 	Mix_PlayMusic(soudtrack, -1);
 	// --- GAME LOOP ---
-	SDL_Event event;
+	SDL_Event event;;
 	bool isRunning = true;
+	
 	while (isRunning){
 		// HANDLE EVENTS
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_QUIT:		isRunning = false; break;
 			case SDL_KEYDOWN:	if (event.key.keysym.sym == SDLK_ESCAPE) isRunning = false; break;
-			case SDL_MOUSEMOTION: playerTarget.x = event.motion.x - playerRect.w/2; playerTarget.y = event.motion.y - playerRect.h/2; break;
+			//case SDL_MOUSEMOTION: playerTarget.x = event.motion.x - playerRect.w/2; playerTarget.y = event.motion.y - playerRect.h/2; break;
 			default:;
 			}
 		}
 
 		// UPDATE
-		playerRect.x += (playerTarget.x - playerRect.x) / 10;
-		playerRect.y += (playerTarget.y - playerRect.y) / 10;
+		frameTime++;
+		if (FPS / frameTime <= 9)
+		{
+			frameTime = 0;
+			playerRect.x += frameWidth;
+			if (playerRect.x >= textWidth)
+				playerRect.x = 0;
+		}
+		/*playerRect.x += (playerTarget.x - playerRect.x) / 10;
+		playerRect.y += (playerTarget.y - playerRect.y) / 10;*/
 		// DRAW
 			//Background
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, bgTexture, nullptr, &bgRect);
 		SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
-		SDL_RenderCopy(renderer, playerTexture, nullptr, &playerRect);
+		//SDL_RenderCopy(renderer, playerTexture, nullptr, &playerRect);
 		
 			//Animated Sprite
+		SDL_RenderCopy(renderer, playerTexture, &playerRect, &playerPosition);
 		SDL_RenderPresent(renderer);
 
 	}
