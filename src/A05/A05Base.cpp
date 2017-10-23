@@ -5,7 +5,8 @@
 //Game general information
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-#define FPS 60
+#define FPS1 60
+#define FPS2 60
 
 
 int main(int, char*[]) {
@@ -40,7 +41,7 @@ int main(int, char*[]) {
 	if (playerTexture == nullptr) throw " No s'han pogut crear les textures";
 	SDL_Rect playerRect{ 0, 0, 100, 50 };
 	SDL_Rect playerTarget{ 0, 0, 100, 100 };*/
-	
+	//P1
 	SDL_Texture *playerTexture(IMG_LoadTexture(renderer, "../../res/img/spCastle.png"));
 	SDL_Rect playerRect, playerPosition;
 	int textWidth, textHeight, frameWidth, frameHeight;
@@ -52,6 +53,19 @@ int main(int, char*[]) {
 	playerPosition.h = playerRect.h = frameHeight;
 	playerPosition.w = playerRect.w = frameWidth;
 	int frameTime = 0;
+	//P2
+	SDL_Texture *playerTexture2(IMG_LoadTexture(renderer, "../../res/img/spCastle.png"));
+	SDL_Rect playerRect2, playerPosition2;
+	int textWidth2, textHeight2, frameWidth2, frameHeight2;
+	SDL_QueryTexture(playerTexture2, NULL, NULL, &textWidth2, &textHeight2);
+	frameWidth2 = textWidth2 / 12;
+	frameHeight2 = textHeight2 / 8;
+	playerPosition2.x = playerPosition2.y = 0;
+	playerRect2.x = 0;
+	playerRect2.y = frameHeight2*4;
+	playerPosition2.h = playerRect2.h = frameHeight2;
+	playerPosition2.w = playerRect2.w = frameWidth2;
+	int frameTime2 = 0;
 	// --- TEXT ---
 	TTF_Font *font{ TTF_OpenFont("../../res/ttf/saiyan.ttf",80) };
 	if(font==nullptr)throw "No es pot inicialitzar SDL_ttf font";
@@ -78,8 +92,9 @@ int main(int, char*[]) {
 	SDL_Event event;;
 	bool isRunning = true;
 	bool OnMenu = true;
-	bool destroyMenu = false;
 	bool startGame = false;
+	bool movingp1 = false;
+	bool movingp2 = false;
 	while (isRunning)
 	{
 		if(OnMenu)
@@ -114,7 +129,7 @@ int main(int, char*[]) {
 		
 		if (startGame)
 		{
-			bool moving = false;
+			
 			// HANDLE EVENTS
 			while (SDL_PollEvent(&event)) {
 				switch (event.type) {
@@ -130,7 +145,7 @@ int main(int, char*[]) {
 						{
 							playerPosition.y -=1 ;
 						}
-						moving = true;
+						movingp1 = true;
 						playerRect.y = 3 * frameHeight;
 						
 					}
@@ -141,7 +156,7 @@ int main(int, char*[]) {
 							playerPosition.y += 1;
 						}
 						playerRect.y = 0;
-						moving = true;
+						movingp1 = true;
 					}
 					else if (event.key.keysym.sym == SDLK_LEFT)
 					{
@@ -150,7 +165,7 @@ int main(int, char*[]) {
 							playerPosition.x -= 1;
 						}
 						playerRect.y = frameHeight;
-						moving = true;
+						movingp1 = true;
 					}
 					else if (event.key.keysym.sym == SDLK_RIGHT)
 					{
@@ -159,60 +174,118 @@ int main(int, char*[]) {
 							playerPosition.x += 1;
 						}
 						playerRect.y = 2 * frameHeight;
-						moving = true;
+						movingp1 = true;
 					}
 					else if (event.key.keysym.sym == SDLK_w)
 					{
-						if (playerPosition.y >= 0)
+						movingp2 = true;
+						if (playerPosition2.y >= 0)
 						{
-							playerPosition.y -= 1;
+							playerPosition2.y -= 1;
 						}
+						playerRect2.y = 7 * frameHeight;
+						frameTime2++;
+						if (FPS2 / frameTime2 <= 9)
+						{
+							frameTime2 = 0;
+							playerRect2.x += frameWidth2;
+							if (playerRect2.x >= textWidth2 / 9)
+							{
+								playerRect2.x = 0;
+							}
+						}
+						
 					}
 					else if (event.key.keysym.sym == SDLK_s)
 					{
-						if (playerPosition.y <= SCREEN_HEIGHT - 50)
+						if (playerPosition2.y <= SCREEN_HEIGHT - 50)
 						{
-							playerPosition.y += 1;
+							playerPosition2.y += 1;
+						}
+						playerRect2.y = 4 * frameHeight;
+						frameTime2++;
+						if (FPS2 / frameTime2 <= 9)
+						{
+							frameTime2 = 0;
+							playerRect2.x += frameWidth2;
+							if (playerRect2.x >= textWidth2 / 9)
+							{
+								playerRect2.x = 0;
+							}
 						}
 					}
 					else if (event.key.keysym.sym == SDLK_a)
 					{
-						if (playerPosition.x >= 0)
+						if (playerPosition2.x >= 0)
 						{
-							playerPosition.x -= 1;
+							playerPosition2.x -= 1;
+						}
+						playerRect2.y = 5*frameHeight;
+						frameTime2++;
+						if (FPS2 / frameTime2 <= 9)
+						{
+							frameTime2 = 0;
+							playerRect2.x += frameWidth2;
+							if (playerRect2.x >= textWidth2 / 9)
+							{
+								playerRect2.x = 0;
+							}
 						}
 					}
 					 
-					else	if (event.key.keysym.sym == SDLK_d)
+					else if (event.key.keysym.sym == SDLK_d)
 					{
-						if (playerPosition.x <= SCREEN_WIDTH - 100)
+						if (playerPosition2.x <= SCREEN_WIDTH - 100)
 						{
-							playerPosition.x += 1;
+							playerPosition2.x += 1;
+						}
+						playerRect2.y = 6 * frameHeight;
+						frameTime2++;
+						if (FPS2 / frameTime2 <= 9)
+						{
+							frameTime2 = 0;
+							playerRect2.x += frameWidth2;
+							if (playerRect2.x >= textWidth2 / 9)
+							{
+								playerRect2.x = 0;
+							}
 						}
 					}
 					break;
-				default:moving = false;
+				default:movingp1 = false; movingp2 = false; break;
 				}
 			}
 			// UPDATE
 			/*playerRect.x += (playerTarget.x - playerRect.x) / 10;
 			playerRect.y += (playerTarget.y - playerRect.y) / 10;*/
-			frameTime++;
-			if (FPS / frameTime <= 9)
+			
+			if (movingp1)
 			{
-				frameTime = 0;
-				playerRect.x += frameWidth;
-				if (playerRect.x >= textWidth / 9)
+				frameTime++;
+				if (FPS1 / frameTime <= 9)
 				{
-					playerRect.x = 0;
-				}
+					frameTime = 0;
+					playerRect.x += frameWidth;
+					if (playerRect.x >= textWidth / 9)
+					{
+						playerRect.x = 0;
+					}
 
+				}
+			}
+			else if (movingp2)
+			{
+				frameTime2++;
+			
 			}
 			SDL_RenderClear(renderer);
 			//DRAW
 			SDL_RenderCopy(renderer, bgTexture, nullptr, &bgRect);
 			//SDL_RenderCopy(renderer, playerTexture, nullptr, &playerRect);
+		
 			SDL_RenderCopy(renderer, playerTexture, &playerRect, &playerPosition);
+			SDL_RenderCopy(renderer, playerTexture2, &playerRect2, &playerPosition2);
+			
 			SDL_RenderPresent(renderer);
 		
 		}
@@ -221,10 +294,10 @@ int main(int, char*[]) {
 	}
 	// --- DESTROY ---
 	SDL_DestroyTexture(playerTexture);
+	SDL_DestroyTexture(playerTexture2);
 	SDL_DestroyTexture(textTexture1);
 	SDL_DestroyTexture(textTexture2);
 	Mix_CloseAudio();
-	destroyMenu = false;
 
 	// --- QUIT ---
 	SDL_Quit();
